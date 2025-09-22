@@ -350,6 +350,13 @@ async function createMainWindow() {
     delete decorations.titleBarStyle;
   }
 
+  // macOS Tahoe 26 - windowserver gpu bug with shadows
+  // https://github.com/microsoft/vscode/pull/267724
+  // TODO: lock into specific version range when macOS releases an official fix
+  if (is.macOS() && release().startsWith('25.')) {
+    decorations.hasShadow = false;
+  }
+
   const electronWindowSettings: Electron.BrowserWindowConstructorOptions = {
     icon,
     width: windowSize.width,
@@ -371,13 +378,6 @@ async function createMainWindow() {
     },
     ...decorations,
   };
-
-  // macOS Tahoe 26 - windowserver gpu bug with shadows
-  // https://github.com/microsoft/vscode/pull/267724
-  // TODO: lock into specific version range when macOS releases an official fix
-  if (is.macOS() && release().startsWith('25.')) {
-    decorations.hasShadow = false;
-  }
 
   const win = new BrowserWindow(electronWindowSettings);
 
